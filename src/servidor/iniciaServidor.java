@@ -56,13 +56,14 @@ public class iniciaServidor {
 					PrintWriter	output	= new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));	
 					
 					//	Se	lee	del	cliente	el	mensaje	y	el	macdelMensajeEnviado
-					String	mensaje	= input.readLine();		
+					String	mensaje	= input.readLine();
+					System.err.println("Mensaje enviado por el cliente: "+mensaje);
 					//	A	continuación	habría	que	calcular	el	mac	del	MensajeEnviado	que	podría	ser											
 					String	macdelMensajeEnviado = input.readLine();	
-					
+					System.err.println("Mac del mensaje enviado: "+macdelMensajeEnviado);
 					//especificacion del algoritmo mac- por defecto diremos macsha256
 					String alg=input.readLine();
-					
+					System.err.println("Algoritmo Hmac utilizado: "+alg);
 					//mac	del	MensajeCalculado -----
 					
 					//String macMensajeEnviado = null;
