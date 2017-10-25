@@ -1,5 +1,12 @@
 package servidor;
 
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
 public class Servidor implements Runnable{
 
 	public static void main(String[] args) throws Exception {
@@ -17,7 +24,13 @@ public class Servidor implements Runnable{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}	
-		server.runServer();
+		try {
+			server.runServer();
+		} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException
+				| BadPaddingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

@@ -7,12 +7,18 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.net.ServerSocketFactory;
 
 public class iniciaServidor {
@@ -24,7 +30,7 @@ public class iniciaServidor {
 			serverSocket=(ServerSocket)socketFactory.createServerSocket(7070);				
 		}		
 		
-		void runServer() {
+		void runServer() throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException {
 			DateFormat diario=new SimpleDateFormat("12");
 			DateFormat hourFormat;
 			Date date=new Date();
@@ -35,29 +41,39 @@ public class iniciaServidor {
 			
 			while(true) {
 				try	{
+					
+					//comunicación segura token-
+					
+					//tratamientoSecundarioServidor.recibeValorClienteYEnvia();
+					
+					//--------------------------
+					
 					hourFormat=new SimpleDateFormat("HH");
 					
 					if(Integer.parseInt(hourFormat.format(date)) > Integer.parseInt(diario.format(date))) {
 						completaD=true;
 					}	//reseteo diario del KPI para no generar más de 1 al día.
 					
-					
+				
 					System.err.println("Esperando conexiones de clientes...");	
 					Socket socket =	(Socket)serverSocket.accept();
 					BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 					PrintWriter	output	= new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
 					
 					//tratamiento de tokens----
-					String random=input.readLine();
+					String r=input.readLine(); //SecureRandom r2=new SecureRandom((r.getBytes()));
 					
-					if(contieneR.contains(random)) {
+					System.out.println("Me llega: "+r);
+					
+					if(contieneR.contains(r)) {
 						System.err.println("Token usado - Posible ataque de replay - Tirando mensaje ..."
 								+ "");
 						output.close();			
 						input.close();			
 						socket.close();	
 					}
-					contieneR.add(random);
+					
+					contieneR.add(r);
 					//-------
 					
 					//	Se	lee	del	cliente	el	mensaje	y	el	macdelMensajeEnviado
@@ -72,12 +88,12 @@ public class iniciaServidor {
 					//mac	del	MensajeCalculado -----
 					
 					//String macMensajeEnviado = null;
-					String macdelMensajeCalculado = calculaMac.performMACTest(mensaje, alg);
+					String macdelMensajeCalculado = calculaMac.performMACTest(mensaje, alg,r);
 					
 					//tratamiento de errores hmac----
 					if(macdelMensajeCalculado.equals("")) {
 						System.err.println("Hmac No valido, estableciendo por defecto Hmac256");
-					    macdelMensajeCalculado = calculaMac.performMACTest(mensaje, "HmacSHA256");
+					    macdelMensajeCalculado = calculaMac.performMACTest(mensaje, "HmacSHA256",r);
 					}
 					// ------------------------------
 					

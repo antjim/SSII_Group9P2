@@ -6,8 +6,13 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.net.SocketFactory;
 import javax.swing.JOptionPane;
 
@@ -16,10 +21,16 @@ import servidor.calculaMac;
 
 public	class	IntegrityVerifierClient	{
 		//Constructor que abre una conexión Socket para enviar mensaje/MAC al servidor
-		public	IntegrityVerifierClient(){					
+		public	IntegrityVerifierClient() throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException{					
 			Boolean nuevoMensaje=true;
 			try	{	
 				while(nuevoMensaje) {
+					//antes de comenzar el envío del mensaje ...
+					
+					//tratamientoSecundarioCliente.envioValorCliente();
+					
+					//---------------------------------------------
+					
 					SocketFactory socketFactory	= (SocketFactory)SocketFactory.getDefault();
 					Socket	socket = (Socket)socketFactory.createSocket("localhost",7070);	
 					
@@ -28,6 +39,7 @@ public	class	IntegrityVerifierClient	{
 					
 					//tokens ----
 					SecureRandom random=Tokens.generaToken();
+					String random2=random.toString();
 					output.println(random);
 					output.flush();
 					//-----------
@@ -44,7 +56,7 @@ public	class	IntegrityVerifierClient	{
 					output.flush();
 					
 					//Habría que calcular el correspondiente MAC con la	clave compartida por servidor/cliente
-					String macdelMensaje = calculaMac.performMACTest(userName,alg);
+					String macdelMensaje = calculaMac.performMACTest(userName,alg,random2);
 					output.println(macdelMensaje);
 					output.flush();
 					
