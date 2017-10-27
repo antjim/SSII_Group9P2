@@ -3,15 +3,12 @@ package servidor;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -56,8 +53,6 @@ public class iniciaServidor {
 					BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 					PrintWriter	output	= new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
 					
-					//ObjectOutputStream obj=new ObjectOutputStream(socket.getOutputStream());
-					
 					//comunicación segura token-
 					
 					String p=input.readLine();
@@ -76,23 +71,7 @@ public class iniciaServidor {
 					Integer key=metodosAuxServer.generaKey(y2, Integer.parseInt(p), Integer.parseInt(x));
 					System.out.println("key server: "+key);
 					
-					/*
-					String valorCliente=input.readLine();
-					List<Integer>l=Tablas.generadorTablas();
-					String combinacion=Tablas.seleccionaTablaYMezcla(l, Integer.parseInt(valorCliente));
-					
-					byte[] cifradoClaveTabla=metodosAuxServer.cifraAES(combinacion);
-					obj.writeObject(cifradoClaveTabla);
-					//output.println(cifradoClaveTabla);
-					output.flush();*/
-					
 					//--------------------------
-					
-					
-					//tratamiento de tokens----
-				/*	String r=input.readLine(); //SecureRandom r2=new SecureRandom((r.getBytes()));
-					
-					System.out.println("Me llega: "+r);*/
 					
 					if(contieneR.contains(key)) {
 						System.err.println("Token usado - Posible ataque de replay - Tirando mensaje ..."

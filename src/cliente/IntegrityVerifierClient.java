@@ -3,22 +3,17 @@ package cliente;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.List;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.net.SocketFactory;
 import javax.swing.JOptionPane;
-
-import servidor.Tokens;
 import servidor.calculaMac;
 
 public	class	IntegrityVerifierClient	{
@@ -61,26 +56,8 @@ public	class	IntegrityVerifierClient	{
 					//p=23;g=5;x=6;y="19";
 					Integer key=metodosAux.generaKey(Integer.parseInt(y), p, x2);
 					System.out.println("key del cliente: "+key);
-					
-				/*	Integer valorCliente=metodosAux.valorTabla();
-					
-					output.println(valorCliente);
-					output.flush();
-					
-					//String tablaCifrada = input.readLine();
-					//byte[] tablaCifrada=obj.readObject();
-					//String tablaDescifrada=metodosAux.descifraAES(tablaCifrada);
-					
-					*/
+				
 					//---------------------------------------------
-					
-					
-					//tokens ----
-					/*SecureRandom random=Tokens.generaToken();
-					String random2=random.toString();
-					output.println(random);
-					output.flush();*/
-					//-----------
 					
 					String userName = JOptionPane.showInputDialog(null,"Introduzca su mensaje que desea enviar al servidor: " );
 					
