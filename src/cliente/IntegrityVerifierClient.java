@@ -31,7 +31,6 @@ public	class	IntegrityVerifierClient	{
 					//Crea un objeto BufferedReader	para leer la respuesta del servidor
 					BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 					
-					//ObjectInputStream obj=new ObjectInputStream(socket.getInputStream());
 					//antes de comenzar el envío del mensaje ...
 					
 					Integer p=metodosAux.generaPrimo();
@@ -51,10 +50,7 @@ public	class	IntegrityVerifierClient	{
 					output.flush();
 					
 					String y=input.readLine();
-					//p=71;g=21;x=46;y="61";
-					//p=23;g=5;x=6;y="19";
 					Integer key=metodosAux.generaKey(Integer.parseInt(y), p, x2);
-					System.out.println("key del cliente: "+key);
 					
 					String macServer=input.readLine();
 					String mServer=input.readLine();

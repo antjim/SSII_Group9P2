@@ -1,7 +1,5 @@
 package servidor;
 
-import java.security.SecureRandom;
-
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -10,7 +8,6 @@ public class calculaMac {
 	public static String performMACTest(String s,String alg,Integer r){  
 	 
 		  try{
-			  //byte[]key=new byte[2] ;	//0-255
 			  
 			  byte[]key=r.toString().getBytes();
 			  
