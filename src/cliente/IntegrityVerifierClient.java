@@ -51,12 +51,22 @@ public	class	IntegrityVerifierClient	{
 					output.flush();
 					
 					String y=input.readLine();
-					System.out.println("y: "+y+ " x: "+x2 + " p: "+p+" g: "+g+ "<---CLIENTE");
 					//p=71;g=21;x=46;y="61";
 					//p=23;g=5;x=6;y="19";
 					Integer key=metodosAux.generaKey(Integer.parseInt(y), p, x2);
 					System.out.println("key del cliente: "+key);
-				
+					
+					String macServer=input.readLine();
+					String mServer=input.readLine();
+					String macCal=calculaMac.performMACTest(mServer,"HmacSHA256", key);
+					
+					if( !(macServer.equals(macCal)) ) {
+						System.err.println("Detectado Man-in-the-middle --- Terminando proceso");
+						output.close();
+						input.close();
+						socket.close();
+						break;
+					}
 					//---------------------------------------------
 					
 					String userName = JOptionPane.showInputDialog(null,"Introduzca su mensaje que desea enviar al servidor: " );

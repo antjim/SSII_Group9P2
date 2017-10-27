@@ -65,10 +65,18 @@ public class iniciaServidor {
 					
 					output.println(y);
 					output.flush();
-					System.out.println("y: "+y2+ " x: "+x + " p: "+p+" g: "+g);
+					
 					//p="71";g="21";x="9";y=57;
 					//p="23";g="5";x="8";y=15;
 					Integer key=metodosAuxServer.generaKey(y2, Integer.parseInt(p), Integer.parseInt(x));
+					
+					String macPrueba=calculaMac.performMACTest("comprueba integridad", "HmacSHA256", key);
+					output.println(macPrueba);
+					output.flush();
+					
+					output.println("comprueba integridad");
+					output.flush();
+					
 					System.out.println("key server: "+key);
 					
 					//--------------------------
@@ -79,6 +87,7 @@ public class iniciaServidor {
 						output.close();			
 						input.close();			
 						socket.close();	
+						break;
 					}
 					
 					contieneR.add(key);
