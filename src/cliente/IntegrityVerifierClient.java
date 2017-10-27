@@ -3,12 +3,14 @@ package cliente;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.List;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -25,23 +27,59 @@ public	class	IntegrityVerifierClient	{
 			Boolean nuevoMensaje=true;
 			try	{	
 				while(nuevoMensaje) {
-					//antes de comenzar el envío del mensaje ...
-					
-					//tratamientoSecundarioCliente.envioValorCliente();
-					
-					//---------------------------------------------
 					
 					SocketFactory socketFactory	= (SocketFactory)SocketFactory.getDefault();
 					Socket	socket = (Socket)socketFactory.createSocket("localhost",7070);	
 					
 					//Crea un PrintWriter para enviar mensaje/MAC al servidor
 					PrintWriter	output = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
+					//Crea un objeto BufferedReader	para leer la respuesta del servidor
+					BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+					
+					//ObjectInputStream obj=new ObjectInputStream(socket.getInputStream());
+					//antes de comenzar el envío del mensaje ...
+					
+					Integer p=metodosAux.generaPrimo();
+					output.println(p);
+					output.flush();
+					
+					Integer g=metodosAux.creaGenerador(p);
+					output.println(g);
+					output.flush();
+					
+					List<Integer>valores=metodosAux.generaValor(p, g);
+					
+					Integer x=valores.get(0);
+					Integer x2=valores.get(1);
+					
+					output.println(x);
+					output.flush();
+					
+					String y=input.readLine();
+					System.out.println("y: "+y+ " x: "+x2 + " p: "+p+" g: "+g+ "<---CLIENTE");
+					//p=71;g=21;x=46;y="61";
+					//p=23;g=5;x=6;y="19";
+					Integer key=metodosAux.generaKey(Integer.parseInt(y), p, x2);
+					System.out.println("key del cliente: "+key);
+					
+				/*	Integer valorCliente=metodosAux.valorTabla();
+					
+					output.println(valorCliente);
+					output.flush();
+					
+					//String tablaCifrada = input.readLine();
+					//byte[] tablaCifrada=obj.readObject();
+					//String tablaDescifrada=metodosAux.descifraAES(tablaCifrada);
+					
+					*/
+					//---------------------------------------------
+					
 					
 					//tokens ----
-					SecureRandom random=Tokens.generaToken();
+					/*SecureRandom random=Tokens.generaToken();
 					String random2=random.toString();
 					output.println(random);
-					output.flush();
+					output.flush();*/
 					//-----------
 					
 					String userName = JOptionPane.showInputDialog(null,"Introduzca su mensaje que desea enviar al servidor: " );
@@ -56,7 +94,7 @@ public	class	IntegrityVerifierClient	{
 					output.flush();
 					
 					//Habría que calcular el correspondiente MAC con la	clave compartida por servidor/cliente
-					String macdelMensaje = calculaMac.performMACTest(userName,alg,random2);
+					String macdelMensaje = calculaMac.performMACTest(userName,alg,key);
 					output.println(macdelMensaje);
 					output.flush();
 					
@@ -67,8 +105,6 @@ public	class	IntegrityVerifierClient	{
 					//Importante para que el mensaje se	envíe
 					output.flush();
 					
-					//Crea un objeto BufferedReader	para leer la respuesta del servidor
-					BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 					//Lee la respuesta del servidor
 					String respuesta = input.readLine();
 					//Muestra la respuesta al cliente

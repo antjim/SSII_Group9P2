@@ -1,4 +1,4 @@
-package cliente;
+package servidor;
 
 import java.security.InvalidKeyException;
 import java.security.Key;
@@ -6,7 +6,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -15,65 +14,28 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 
-public class metodosAux {
+public class metodosAuxServer {	//aquí es donde trabajará todos los tokens junto con la seguridad extra.
 	
-	public static Integer valorTabla() {	//lo usamos para enviarlo al servidor y éste coger la tabla
-		Integer res;
-		Random r=new Random();
-		res=r.nextInt(256);
-		return res;
-	}
-
-	public static String descifraAES(byte[] mensajeCifrado) throws NoSuchAlgorithmException, 
-		NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+	public static byte[] cifraAES(String mensaje) throws InvalidKeyException, 
+		NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException{
 		
 		KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-	    keyGenerator.init(128);
-	    Key key = keyGenerator.generateKey();
-	    key = new SecretKeySpec("3q{hrCRX-Fu@3bD15*".getBytes(),  0, 16, "AES");
-	   
-	    Cipher aes = Cipher.getInstance("AES/ECB/PKCS5Padding");
-	    aes.init(Cipher.DECRYPT_MODE, key);
-	    
-	   // System.out.println("mc : "+mensajeCifrado.getBytes());
-	    byte[] descifra = aes.doFinal(mensajeCifrado);
-	    
-	    String descifrado=new String(descifra);
-	    
-	    return descifrado;
-	}
+		keyGenerator.init(128);
+		Key key = keyGenerator.generateKey();
+		key = new SecretKeySpec("3q{hrCRX-Fu@3bD15*".getBytes(),  0, 16, "AES");
+		Cipher aes = Cipher.getInstance("AES/ECB/PKCS5Padding");
 	
-	public static Integer generaPrimo() {
-		SecureRandom r=new SecureRandom();
-		Integer p=r.nextInt();
-		while(!esPrimo(p) || p<0) {
-			p=r.nextInt();
-		}
-		return p;
-	}
-	
-	public static Boolean esPrimo(Integer p) {
-		Boolean res=true;
+		aes.init(Cipher.ENCRYPT_MODE, key);
+		byte[] cifra = aes.doFinal(mensaje.getBytes());
+		System.out.println("cifra: "+cifra.toString());
 		
-		for (int i=2;i<p;i++) {
-			if(p%i==0) {
-				res=false;
-				break;
-			}
-		}
+		aes.init(Cipher.DECRYPT_MODE, key);
+	    
+	    byte[] descifra = aes.doFinal(cifra.toString().getBytes());
+	    
+	    System.out.println(new String (descifra) + " mensaje original: "+mensaje);
 		
-		return res;
-	}
-	
-	public static Integer creaGenerador(Integer p) {
-		
-		SecureRandom r=new SecureRandom();
-		Integer g=r.nextInt(p-2);
-		
-		while((g<2))
-			g=r.nextInt(p-2);
-		
-		return g;
+	    return cifra;
 	}
 	
 	public static List<Integer> generaValor(Integer p, Integer g) {
@@ -102,20 +64,22 @@ public class metodosAux {
 			}
 			
 		}
+		
 		l.add((int)res.doubleValue());l.add(x);
+		
 		return l;
 	}
 	
 	public static Integer generaKey(Integer y,Integer p, Integer x) {
 		Double res=1.0;
 		
-		String n=Integer.toBinaryString(x);
+		String n=Integer.toBinaryString(y);
 		
 		for (int i=0;i<n.length();i++) {
 			char c=n.charAt(i);
 			
 			if(c=='1') {
-				res=(res*Double.parseDouble(y.toString()))%Double.parseDouble(p.toString());
+				res=(res*Double.parseDouble(x.toString()))%Double.parseDouble(p.toString());
 				if(!(i==n.length()-1) && n.charAt(i+1)!='0')
 					res= ( Math.pow(res, 2) ) % Double.parseDouble(p.toString());
 			}
@@ -124,7 +88,6 @@ public class metodosAux {
 				if(!(i==n.length()-1) && n.charAt(i+1) !='0')
 					res= ( Math.pow(res, 2) ) % Double.parseDouble(p.toString());
 			}
-			
 		}
 		return (int)res.doubleValue();
 	}

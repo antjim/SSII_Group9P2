@@ -32,7 +32,7 @@ public class tratamientoSecundarioCliente {
 		BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));	
 		String tablaCifrada = input.readLine();
 		
-		String tablaDescifrada=metodosAux.descifraAES(tablaCifrada);	//esto lo usamos como clave de cifrado del token
+		//String tablaDescifrada=metodosAux.descifraAES(tablaCifrada);	//esto lo usamos como clave de cifrado del token
 		
 		output.close();
 		socket.close();

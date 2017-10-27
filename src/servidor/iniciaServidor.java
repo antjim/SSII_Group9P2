@@ -3,6 +3,8 @@ package servidor;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
@@ -34,19 +36,13 @@ public class iniciaServidor {
 			DateFormat diario=new SimpleDateFormat("12");
 			DateFormat hourFormat;
 			Date date=new Date();
-			List<String>contieneR=new ArrayList<String>();
+			List<Integer>contieneR=new ArrayList<Integer>();
 			
 			Boolean completaD=true;
 			Integer success=0;	Integer fails=0;  Integer contKPID=0;
 			
 			while(true) {
 				try	{
-					
-					//comunicación segura token-
-					
-					//tratamientoSecundarioServidor.recibeValorClienteYEnvia();
-					
-					//--------------------------
 					
 					hourFormat=new SimpleDateFormat("HH");
 					
@@ -60,12 +56,45 @@ public class iniciaServidor {
 					BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 					PrintWriter	output	= new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
 					
+					//ObjectOutputStream obj=new ObjectOutputStream(socket.getOutputStream());
+					
+					//comunicación segura token-
+					
+					String p=input.readLine();
+					String g=input.readLine();
+					String x=input.readLine();
+					
+					List<Integer>valores=metodosAuxServer.generaValor(Integer.parseInt(p), Integer.parseInt(g));
+					Integer y=valores.get(0);
+					Integer y2=valores.get(1);
+					
+					output.println(y);
+					output.flush();
+					System.out.println("y: "+y2+ " x: "+x + " p: "+p+" g: "+g);
+					//p="71";g="21";x="9";y=57;
+					//p="23";g="5";x="8";y=15;
+					Integer key=metodosAuxServer.generaKey(y2, Integer.parseInt(p), Integer.parseInt(x));
+					System.out.println("key server: "+key);
+					
+					/*
+					String valorCliente=input.readLine();
+					List<Integer>l=Tablas.generadorTablas();
+					String combinacion=Tablas.seleccionaTablaYMezcla(l, Integer.parseInt(valorCliente));
+					
+					byte[] cifradoClaveTabla=metodosAuxServer.cifraAES(combinacion);
+					obj.writeObject(cifradoClaveTabla);
+					//output.println(cifradoClaveTabla);
+					output.flush();*/
+					
+					//--------------------------
+					
+					
 					//tratamiento de tokens----
-					String r=input.readLine(); //SecureRandom r2=new SecureRandom((r.getBytes()));
+				/*	String r=input.readLine(); //SecureRandom r2=new SecureRandom((r.getBytes()));
 					
-					System.out.println("Me llega: "+r);
+					System.out.println("Me llega: "+r);*/
 					
-					if(contieneR.contains(r)) {
+					if(contieneR.contains(key)) {
 						System.err.println("Token usado - Posible ataque de replay - Tirando mensaje ..."
 								+ "");
 						output.close();			
@@ -73,7 +102,7 @@ public class iniciaServidor {
 						socket.close();	
 					}
 					
-					contieneR.add(r);
+					contieneR.add(key);
 					//-------
 					
 					//	Se	lee	del	cliente	el	mensaje	y	el	macdelMensajeEnviado
@@ -88,12 +117,12 @@ public class iniciaServidor {
 					//mac	del	MensajeCalculado -----
 					
 					//String macMensajeEnviado = null;
-					String macdelMensajeCalculado = calculaMac.performMACTest(mensaje, alg,r);
+					String macdelMensajeCalculado = calculaMac.performMACTest(mensaje, alg,key);
 					
 					//tratamiento de errores hmac----
 					if(macdelMensajeCalculado.equals("")) {
 						System.err.println("Hmac No valido, estableciendo por defecto Hmac256");
-					    macdelMensajeCalculado = calculaMac.performMACTest(mensaje, "HmacSHA256",r);
+					    macdelMensajeCalculado = calculaMac.performMACTest(mensaje, "HmacSHA256",key);
 					}
 					// ------------------------------
 					

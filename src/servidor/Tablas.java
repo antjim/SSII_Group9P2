@@ -15,7 +15,8 @@ public class Tablas {
 	}
 	
 	public static String seleccionaTablaYMezcla(List<Integer>l,Integer valorCliente) {
-		return "3q{hrCRX-Fu@3bD15*" + l.get(valorCliente).toString();		//combinación privada
+		SecureRandom r=new SecureRandom();
+		return r.nextInt() + l.get(valorCliente).toString();		//combinación privada
 	}
 
 }
