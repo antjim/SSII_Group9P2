@@ -12,7 +12,7 @@ import java.util.TimeZone;
 public class Kpi {
 	
 	public static void calculaKPI(Integer success, Integer total,Integer contKPID) throws IOException {
-		Double res = (double) (success/total);
+		Float res = (float) (success)/total;
 		
 		File incidencias=new File("DailyKPI.txt");	
 		BufferedWriter bw = new BufferedWriter(new FileWriter(incidencias,true));
