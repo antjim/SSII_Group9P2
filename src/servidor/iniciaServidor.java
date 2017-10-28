@@ -30,7 +30,7 @@ public class iniciaServidor {
 		}		
 		
 		void runServer() throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException {
-			DateFormat diario=new SimpleDateFormat("12");
+			DateFormat diario=new SimpleDateFormat("19");
 			DateFormat hourFormat;
 			Date date=new Date();
 			List<Integer>contieneR=new ArrayList<Integer>();
@@ -65,7 +65,6 @@ public class iniciaServidor {
 					
 					output.println(y);
 					output.flush();
-					
 					Integer key=metodosAuxServer.generaKey(y2, Integer.parseInt(p), Integer.parseInt(x));
 					
 					String macPrueba=calculaMac.performMACTest("comprueba integridad", "HmacSHA256", key);
@@ -124,7 +123,7 @@ public class iniciaServidor {
 					}
 					
 					//KPI rutinario ----
-					if( diario.equals(hourFormat) && completaD ) {
+					if( diario.format(date).equals(hourFormat.format(date)) && completaD ) {
 						Integer total=success+fails;
 						contKPID++;
 						Kpi.calculaKPI(success, total,contKPID);
