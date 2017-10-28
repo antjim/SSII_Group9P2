@@ -69,10 +69,14 @@ public class iniciaServidor {
 					Integer key=metodosAuxServer.generaKey(y2, Integer.parseInt(p), Integer.parseInt(x));
 					
 					String macPrueba=calculaMac.performMACTest("comprueba integridad", "HmacSHA256", key);
+					String macPruebaIntegra=calculaMac.performMACTest("comprueba integridad", "HmacSHA256", null);
 					output.println(macPrueba);
 					output.flush();
 					
 					output.println("comprueba integridad");
+					output.flush();
+					
+					output.println(macPruebaIntegra);
 					output.flush();
 					
 					//--------------------------

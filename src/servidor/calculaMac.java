@@ -6,10 +6,15 @@ import javax.crypto.spec.SecretKeySpec;
 public class calculaMac {
 	
 	public static String performMACTest(String s,String alg,Integer r){  
-	 
+		
 		  try{
+			  byte[]key;
+			  if(r==null){
+				  key="wlcyZ:]xvR%q8f;BKI%4".getBytes();
+			  }else{
+				  key=r.toString().getBytes();  
+			  }
 			  
-			  byte[]key=r.toString().getBytes();
 			  
 		      Mac mac=Mac.getInstance(alg);
 		      

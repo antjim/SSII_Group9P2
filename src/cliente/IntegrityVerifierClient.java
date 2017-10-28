@@ -54,9 +54,12 @@ public	class	IntegrityVerifierClient	{
 					
 					String macServer=input.readLine();
 					String mServer=input.readLine();
+					String macServer2=input.readLine();
 					String macCal=calculaMac.performMACTest(mServer,"HmacSHA256", key);
 					
-					if( !(macServer.equals(macCal)) ) {
+					String macCal2=calculaMac.performMACTest(mServer, "HmacSHA256", null);
+					
+					if( !(macServer.equals(macCal)) || !(macServer2.equals(macCal2)) ) {
 						System.err.println("Detectado Man-in-the-middle --- Terminando proceso");
 						output.close();
 						input.close();
